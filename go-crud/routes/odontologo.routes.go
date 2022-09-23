@@ -48,5 +48,16 @@ func DeleteOdontologosHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 func PutOdontologosHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("PutOdonto"))
+	var odonto models.Odontologo
+	params := mux.Vars(r)
+	json.NewDecoder(r.Body).Decode(&odonto)
+	updateOdontolog := db.DB.Where("id = ?", params["id"]).Updates(&odonto)
+	err := updateOdontolog.Error
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest) //400
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	json.NewEncoder(w).Encode(&odonto)
 }
